@@ -1,33 +1,21 @@
-<script>
-let latitude;
-let longitude;
+"use strict";
 
-function getLocation() {
-  try {
-    navigator.geolocation.getCurrentPosition(showPosition);
-  } catch (error) {
-    console.error("Error:", error.message);
-  }
-}
-function showPosition(position) {
-  latitude = position.coords.latitude;
-  longitude = position.coords.longitude;
+const diceBtn = document.querySelector(".button-section");
+const adviceNumber = document.querySelector(".advice-number");
+const adviceText = document.querySelector(".quotes");
+const apiUrl = "https://api.adviceslip.com/advice";
 
-  // Construct the URL using latitude and longitude
-  const weatherURL = https://weather.com/weather/today/l/${latitude},${longitude};
-
-  // Fetch weather data using the constructed URL
-  fetch(weatherURL)
-    .then(response => {
-      if (response.ok) {
-        return response.text();
-      }
-      throw new Error('Network response was not ok.');
-    })
-    .then(data => {
-      // Display weather data in the div
-      document.getElementById("weatherInfo").innerHTML = data;
-    })
-    .catch(error => console.error('There was a problem with the fetch operation:', error));
-}
-</script>
+//Button click event
+diceBtn.addEventListener("click", () => {
+  //Request Data
+  fetch(apiUrl, { cache: "no-cache" })
+    .then((response) => response.json())
+    .then((response) => {
+      let data = response.slip;
+      let dataId = data.id;
+      let dataAdvice = data.advice;
+      //Inject to DOM
+      adviceNumber.innerHTML = `advice # ${dataId}`;
+      adviceText.innerHTML = dataAdvice;
+    }).catch(error => console.error(error));
+});
